@@ -4,6 +4,7 @@ import csv
 import os
 from dotenv import load_dotenv
 import ftplib
+import time
 
 # OpenAI APIキーを設定
 load_dotenv()
@@ -23,8 +24,8 @@ def summarize_text(text):
                 messages=[
                     {
                         "role": "system",
-                        "content": "スタッフと顧客との電話でのやりとりです。内容の重要なポイントを箇条書きで3～5つあげてください。そのさい型式や金額などの情報があればそれを加えてください。"
-#                        "content": "スタッフと顧客との電話でのやりとりです。なるべく1文で要約してください。そのさい型式や金額や顧客の名前などの情報があればそれを加えてください。"
+                        "content": "以下は電話でのやりとりです。短く効果的に箇条書きで要約してください。" \
+                                   "そのさい型式や金額などの情報があればそれを加えてください。"
                     },
                     {
                         "role": "user",
@@ -89,16 +90,20 @@ if __name__ == "__main__":
         print(sum_text)
     else:
         while True:
-            fid = input("\nパラメータ=文書番号を指定してください")
-            file_name = f"txt_{fid}.csv"
-            file_path = os.path.join(file_dir,file_name)
-            src_text = read_text(file_path)
-            sum_text = summarize_text(src_text)
-            print(sum_text)
-            sum_file_name = f"sum_{fid}.txt"
-            wfile_path = os.path.join(file_dir,sum_file_name)
-            write_sum_text(wfile_path,sum_text)    
-            upload_to_server(sum_file_name)
+            fid_range = input("\nパラメータ=文書番号を指定してください")
+            start ,end = fid_range.split("-")
+            num_list =  list(range(int(start), int(end)+1))
+            for fid in num_list: 
+                file_name = f"txt_{fid}.csv"
+                file_path = os.path.join(file_dir,file_name)
+                src_text = read_text(file_path)
+                sum_text = summarize_text(src_text)
+                print(sum_text)
+                sum_file_name = f"sum_{fid}.txt"
+                wfile_path = os.path.join(file_dir,sum_file_name)
+                write_sum_text(wfile_path,sum_text)    
+                upload_to_server(sum_file_name)
+                time.sleep(15)
         
 
 
