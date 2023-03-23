@@ -9,10 +9,13 @@ import json
 load_dotenv()
 openai.api_key = os.environ["OPEN_API_KEY"] 
 
-with open("sample02_L.m4a", "rb") as file:
+
+
+
+with open("senmu03.m4a", "rb") as file:
     transcription = openai.Audio.transcribe("whisper-1", file)
     print(transcription.text)
 
-with open("sample02_R.m4a", "rb") as file:
-    transcription = openai.Audio.transcribe("whisper-1", file)
-    print(transcription.text)
+#with open("sample02_R.m4a", "rb") as file:
+#    transcription = openai.Audio.transcribe("whisper-1", file)
+#    print(transcription.text)
