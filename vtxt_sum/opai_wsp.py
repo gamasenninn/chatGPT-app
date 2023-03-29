@@ -11,7 +11,6 @@ openai.api_key = os.environ["OPEN_API_KEY"]
 
 
 
-
 with open("senmu03.m4a", "rb") as file:
     transcription = openai.Audio.transcribe("whisper-1", file)
     print(transcription.text)

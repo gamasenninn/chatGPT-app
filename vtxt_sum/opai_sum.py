@@ -69,6 +69,7 @@ def write_sum_text(file_path,text):
     with open(file_path,  'w' ,encoding='cp932') as wf:
         wf.write(text)
 
+
 def upload_to_server(file_name):
     # FTPサーバーに接続する
     ftp_url = os.environ["FTP_SERVER_URL"]
