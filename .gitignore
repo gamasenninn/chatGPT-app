@@ -127,3 +127,5 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+vtxt_sum/sample.m4a
+*.m4a
