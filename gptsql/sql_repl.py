@@ -5,6 +5,7 @@ from sqlalchemy import create_engine, MetaData
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql import text
 from sqlalchemy.exc import SQLAlchemyError
+from tabulate import tabulate
 
 # OpenAI APIキーを設定
 load_dotenv()
@@ -38,17 +39,13 @@ def gen_sql(text,meta_text):
         ],
     )
 
-    # 要約されたテキストを取得
-    summary = response.choices[0].message.content.strip()
-    return summary
+    return response.choices[0].message.content.strip()
 
 
 def init_meta_data():
 
-    # メタデータを作成する
+    # メタデータをさくせし、テーブル情報を反映させるためにエンジンからテーブル情報を読み込む
     metadata = MetaData()
-
-    # メタデータにテーブル情報を反映させるためにエンジンからテーブル情報を読み込む
     metadata.reflect(bind=engine)
 
     # メタデータのテーブル情報からテーブル名と列情報を編集する
@@ -68,10 +65,11 @@ def exec_sql(sql):
             t = text (sql)
             result = session.execute(t)
 
-            # 結果を取得するためにforループで回す
+            header = [k for k in result.keys()]
+
             rows = result.fetchall()
-            for row in rows:
-                print(row)
+            tabled = tabulate(rows,header, tablefmt="github")
+            print(tabled)
 
     except SQLAlchemyError as e:
         print(f'Exception Excute SQL: {e}\n')
