@@ -4,8 +4,14 @@ import os
 from dotenv import load_dotenv
 
 def transcribe_audio(filename):
+   
     with open(filename, "rb") as file:
-        transcription = openai.Audio.transcribe("whisper-1", file)
+        params ={
+            "response_format" : "vtt",
+            "tempra"
+        }
+        transcription = openai.Audio.transcribe("whisper-1", file, **params)
+        print("trans:",transcription)
         return transcription.text
 
 def main():
