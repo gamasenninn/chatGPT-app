@@ -1,23 +1,39 @@
 import pandas as pd
+import re
 
-# LとRのファイル名を指定
-l_file = 'L_file.vtt'
-r_file = 'R_file.vtt'
+def parse_vtt(file_name):
+    with open(file_name, "r", encoding="utf-16", errors="ignore") as file:
+        content = file.read()
 
-# ファイルを読み込み、データフレームに変換
-l_df = pd.read_csv(l_file, sep='\t', header=None, skiprows=2)
-r_df = pd.read_csv(r_file, sep='\t', header=None, skiprows=2)
+    cues = content.strip().split("\n\n")[1:]
+    time_ranges = []
+    texts = []
 
-# 列名を設定
-l_df.columns = ['L_Time', 'L_Text']
-r_df.columns = ['R_Time', 'R_Text']
+    for cue in cues:
+        lines = cue.strip().split("\n")
+        print(f"lines:{lines}")
 
-# 時刻を datetime 型に変換
-l_df['L_Time'] = pd.to_datetime(l_df['L_Time'], format='%H:%M:%S.%f')
-r_df['R_Time'] = pd.to_datetime(r_df['R_Time'], format='%H:%M:%S.%f')
+        if len(lines) == 3:
+            _, time_range, text = lines
+        else:
+            time_range, text = lines
+        start_time, end_time = time_range.split(" --> ")
 
-# LとRのデータフレームを結合して時系列で並べ替え
-merged_df = pd.concat([l_df, r_df], axis=1).sort_values(by=['L_Time', 'R_Time'])
+        time_ranges.append((start_time, end_time))
+        texts.append(text)
 
-# マージしたデータフレームをCSVファイルに書き出し
-merged_df.to_csv('merged_file.csv', index=False)
+    return time_ranges, texts
+
+def create_dataframe_from_vtt(file_name):
+    time_ranges, texts = parse_vtt(file_name)
+    data = {
+        "Start_Time": [start_time for start_time, _ in time_ranges],
+        "End_Time": [end_time for _, end_time in time_ranges],
+        "Text": texts
+    }
+    df = pd.DataFrame(data)
+    return df
+
+vtt_file = "L_file.vtt"
+df = create_dataframe_from_vtt(vtt_file)
+print(df)

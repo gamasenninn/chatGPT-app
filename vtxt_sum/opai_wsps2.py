@@ -8,11 +8,15 @@ def transcribe_audio(filename):
     with open(filename, "rb") as file:
         params ={
             "response_format" : "vtt",
-            "tempra"
+            "temperature" : 0, 
+            "language" : "ja" ,
+            "prompt": 
+                "文字起こししたテキストの先頭に●を付与してください"
         }
         transcription = openai.Audio.transcribe("whisper-1", file, **params)
-        print("trans:",transcription)
-        return transcription.text
+        #print("trans:",transcription)
+        #return transcription.text
+        return transcription
 
 def main():
     # OpenAI APIキーを設定
